@@ -47,8 +47,8 @@ PASSWORD_ACCESO = "archviz2026"
 
 def check_password():
     if "authenticated" not in st.session_state:
-        st.sidebar.title("Acceso DeMos") # Mantenemos sidebar solo para login si es necesario, o lo movemos al centro
-        pwd = st.text_input("Contraseña de Acceso", type="password")
+        st.title("Acceso DeMos")
+        pwd = st.text_input("Contraseña", type="password")
         if st.button("Entrar"):
             if pwd == PASSWORD_ACCESO:
                 st.session_state.authenticated = True
@@ -107,7 +107,7 @@ if check_password():
 
     st.divider()
 
-    # --- CONTROLES SUPERIORES (SIN SIDEBAR) ---
+    # --- CONTROLES SUPERIORES ---
     c_controls_1, c_controls_2, c_controls_3 = st.columns([2, 1, 1])
     
     with c_controls_1:
@@ -121,14 +121,13 @@ if check_password():
         }
 
     with c_controls_2:
-        st.write("") # Espaciador vertical
+        st.write("") 
         st.write("") 
         if st.button("Recargar JSONs 🔄", use_container_width=True):
             st.cache_data.clear()
             st.rerun()
             
     with c_controls_3:
-        # Espacio para futuro botón o vacío
         pass
 
     # --- ZONA 1: REFERENCIAS ---
@@ -171,10 +170,9 @@ if check_password():
                     # Preparamos contexto
                     json_context = json.dumps(st.session_state.json_data, indent=2, ensure_ascii=False) if st.session_state.json_data else "No JSON data."
                     
-                    # Prompt del Sistema actualizado con TU GLOSARIO
+                    # Prompt del Sistema
                     system_prompt = f"""
                     You are 'PromptAssistantGEM', an advanced CLI for ArchViz Prompt Engineering.
-                    
                     I have loaded a library of styles/materials in JSON:
                     {json_context}
 
@@ -190,24 +188,33 @@ if check_password():
                     USER COMMAND: {cmd_input}
                     """
                     
+                    # Llamada a Gemini Flash (Texto)
                     res = client.models.generate_content(
                         model="gemini-2.5-flash",
                         contents=system_prompt
                     )
-                    st.session_state.prompt_final = res.text.strip()
-                    st.rerun()
+                    
+                    # Validación de respuesta de TEXTO
+                    if res.text:
+                        st.session_state.prompt_final = res.text.strip()
+                        # AQUÍ EL CAMBIO: No usamos st.rerun(), dejamos que el flujo continue hacia abajo
+                        st.success("Prompt generado correctamente.")
+                    else:
+                        st.error("El modelo devolvió una respuesta vacía (Posible bloqueo de seguridad en el texto).")
+                        
                 except Exception as e:
                     st.error(f"Error en motor de prompts: {e}")
         else:
             st.warning("Escribe un comando primero.")
 
-    # 2.3 Salida (Debajo del botón)
+    # 2.3 Salida (Al estar debajo del botón y NO usar rerun, se actualizará sola)
     st.markdown("**Prompt Final (Editable)**")
     final_prompt = st.text_area("Resultado optimizado:", 
                               value=st.session_state.prompt_final, 
                               height=150, 
                               key="fp_area")
     
+    # Sincronización inversa: Si el usuario edita a mano, actualizamos el estado
     if final_prompt != st.session_state.prompt_final:
         st.session_state.prompt_final = final_prompt
 
