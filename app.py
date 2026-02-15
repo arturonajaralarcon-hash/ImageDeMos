@@ -155,7 +155,7 @@ if check_password():
 
     st.divider()
 
-    # --- ZONA 2: ULTIMATE PROMPT ENGINE (VERTICAL) ---
+# --- ZONA 2: ULTIMATE PROMPT ENGINE (VERTICAL) ---
     st.subheader("2. Composición de Prompt")
     
     # 2.1 Entrada
@@ -196,28 +196,40 @@ if check_password():
                     
                     # Validación de respuesta de TEXTO
                     if res.text:
-                        st.session_state.prompt_final = res.text.strip()
-                        # AQUÍ EL CAMBIO: No usamos st.rerun(), dejamos que el flujo continue hacia abajo
-                        st.success("Prompt generado correctamente.")
+                        texto_limpio = res.text.strip()
+                        
+                        # 1. Actualizamos la variable maestra
+                        st.session_state.prompt_final = texto_limpio
+                        
+                        # 2. !!! ESTA ES LA SOLUCIÓN !!!
+                        # Forzamos la actualización directa de la memoria del widget "fp_area"
+                        st.session_state["fp_area"] = texto_limpio
+                        
+                        # 3. Recargamos para que el cambio se vea inmediatamente
+                        st.rerun()
                     else:
-                        st.error("El modelo devolvió una respuesta vacía (Posible bloqueo de seguridad en el texto).")
+                        st.error("El modelo devolvió una respuesta vacía.")
                         
                 except Exception as e:
                     st.error(f"Error en motor de prompts: {e}")
         else:
             st.warning("Escribe un comando primero.")
 
-    # 2.3 Salida (Al estar debajo del botón y NO usar rerun, se actualizará sola)
+    # 2.3 Salida
     st.markdown("**Prompt Final (Editable)**")
+    
+    # Nos aseguramos que la variable prompt_final tenga algo antes de pintar
+    if "prompt_final" not in st.session_state:
+        st.session_state.prompt_final = ""
+
     final_prompt = st.text_area("Resultado optimizado:", 
                               value=st.session_state.prompt_final, 
                               height=150, 
-                              key="fp_area")
+                              key="fp_area") # La clave 'fp_area' ahora ya tiene el valor inyectado
     
     # Sincronización inversa: Si el usuario edita a mano, actualizamos el estado
     if final_prompt != st.session_state.prompt_final:
         st.session_state.prompt_final = final_prompt
-
     # --- ZONA 3: GENERACIÓN DE IMAGEN ---
     st.divider()
     
