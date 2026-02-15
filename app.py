@@ -4,44 +4,80 @@ from google.genai import types
 import PIL.Image
 from io import BytesIO
 
-# Configuración de página
-st.set_page_config(page_title="Image Gen DeMos + Prompt Improver", layout="wide", page_icon="🏗️")
+# --- CONFIGURACIÓN DE PÁGINA ---
+st.set_page_config(page_title="Ultimate DeMos Gen", layout="wide", page_icon="🎨")
 
 # --- ESTADOS DE SESIÓN ---
 if "referencias" not in st.session_state:
     st.session_state.referencias = [] 
 if "historial" not in st.session_state:
     st.session_state.historial = []
-# Estado para guardar el prompt y permitir su edición
-if "prompt_actual" not in st.session_state:
-    st.session_state.prompt_actual = ""
+if "prompt_final" not in st.session_state:
+    st.session_state.prompt_final = "" # Aquí se guarda el prompt ya procesado
+
+# --- LÓGICA DEL SISTEMA "ULTIMATE PROMPT" (Simulación de JSONs) ---
+# Esta instrucción le enseña a Gemini Flash a comportarse como tu aplicación de comandos
+SYSTEM_INSTRUCTION_ULTIMATE = """
+You are the 'Ultimate AI Image Prompt Generator'. You are NOT a chat bot. You are a CLI (Command Line Interface) for prompt engineering.
+Your goal is to accept commands and output strictly formatted image prompts or variations.
+
+COMMANDS LOGIC:
+1. 'improve: <text>' -> Apply the 'Ultimate Structure': Subject + Medium + Style + Artist + Website + Resolution + Additional Details + Color + Lighting.
+2. 'edit: <text>' -> Fix grammar, clarity, and add slight detail without changing the core style.
+3. 'subject: <text>' -> Focus purely on describing the subject, ignoring style/lighting commands.
+4. 'style: <text>' -> Focus purely on describing an aesthetic style (e.g., Cyberpunk, Baroque).
+5. 'multiple: <text>' -> Generate 3 distinct variations of the prompt numbered 1, 2, 3.
+
+RULES:
+- If no command is provided, assume 'improve:'.
+- Output ONLY the prompt text. No "Here is your prompt" or conversational filler.
+- For 'improve:', ensure the output is a single, comma-separated, high-quality prompt optimized for generative AI.
+"""
 
 # --- SEGURIDAD ---
 PASSWORD_ACCESO = "archviz2026"
 
 def check_password():
     if "authenticated" not in st.session_state:
-        st.sidebar.title("Acceso")
+        st.sidebar.title("Login")
         pwd = st.sidebar.text_input("Contraseña", type="password")
         if st.sidebar.button("Entrar"):
             if pwd == PASSWORD_ACCESO:
                 st.session_state.authenticated = True
                 st.rerun()
             else:
-                st.sidebar.error("Incorrecta")
+                st.sidebar.error("Acceso Denegado")
         return False
     return True
 
 if check_password():
     client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
 
-    st.title("Image Gen DeMos")
-    st.caption("ArchViz Specialized | Nano Banana Series + Ultimate Prompt Engine")
+    # --- ENCABEZADO Y TUTORIAL ---
+    st.title("Ultimate DeMos Gen 🎨")
+    
+    with st.expander("📘 Tutorial y Comandos (Léeme primero)", expanded=True):
+        st.markdown("""
+        **Bienvenido a la integración de Ultimate Prompt Generator.**
+        Esta herramienta funciona mediante **comandos** para estructurar tus prompts antes de generar la imagen.
+        
+        **Lista de Comandos Disponibles:**
+        * `improve: tu idea` -> Aplica la estructura completa (Sujeto, Medio, Estilo, Iluminación, etc.). **(Recomendado)**
+        * `edit: tu prompt` -> Corrige gramática y claridad sin cambiar mucho el estilo.
+        * `style: estilo` -> Genera solo una descripción de estilo artístico.
+        * `multiple: tu idea` -> Crea 3 variaciones diferentes para que elijas.
+        
+        **Flujo de trabajo:**
+        1. Escribe tu comando en el cuadro "Entrada de Comandos".
+        2. Presiona **"Procesar Comando"**.
+        3. Revisa y edita el resultado en el cuadro de abajo.
+        4. Presiona **"Generar Imagen Final"**.
+        """)
 
-    # --- SIDEBAR: CONFIGURACIÓN ---
+    # --- SIDEBAR: CONFIGURACIÓN SIMPLE ---
     with st.sidebar:
-        st.header("Ajustes Técnicos")
-        modelo_nombre = st.selectbox("Motor de Render", [
+        st.header("Motor")
+        modelo_nombre = st.selectbox("Modelo", [
             "Nano Banana Pro (Gemini 3 Pro Image)",
             "Nano Banana (Gemini 2.5 Flash Image)"
         ])
@@ -50,17 +86,11 @@ if check_password():
             "Nano Banana Pro (Gemini 3 Pro Image)": "gemini-3-pro-image-preview",
             "Nano Banana (Gemini 2.5 Flash Image)": "gemini-2.5-flash-image"
         }
-        
-        aspect_ratio = st.selectbox("Formato (Aspect Ratio)", 
-                                   ["16:9", "1:1", "9:16", "3:2", "2:3", "4:5", "5:4", "4:3", "3:4"])
-        
-        # Nota: Esto es simulado en Gemini Image por ahora, pero lo mantenemos para el prompt
-        upscale_option = st.select_slider("Resolución Objetivo", options=["Nativo", "2K", "3K", "4K"])
+        st.info("Ajustes de resolución y formato eliminados por solicitud. Controlar vía Prompt.")
 
-    # --- BIBLIOTECA DE REFERENCIAS ---
-    st.subheader("1. Contexto Visual (Referencias)")
-    
-    uploaded_files = st.file_uploader("Arrastra imágenes de referencia", 
+    # --- ZONA 1: REFERENCIAS (OPCIONAL) ---
+    st.subheader("1. Referencias Visuales")
+    uploaded_files = st.file_uploader("Sube imágenes para guiar al modelo (Opcional)", 
                                      type=["png", "jpg", "jpeg"], accept_multiple_files=True)
     
     if uploaded_files:
@@ -69,96 +99,76 @@ if check_password():
             if not any(d['name'] == f.name for d in st.session_state.referencias):
                 st.session_state.referencias.append({"img": img, "name": f.name})
 
+    refs_activas = []
     if st.session_state.referencias:
         cols = st.columns(6)
-        refs_activas = []
         for i, ref in enumerate(st.session_state.referencias):
             with cols[i % 6]:
                 st.image(ref["img"], use_container_width=True)
                 if st.checkbox(f"Usar", key=f"check_{ref['name']}"):
                     refs_activas.append(ref["img"])
-        if st.button("Limpiar Biblioteca"):
+        if st.button("Limpiar Referencias"):
             st.session_state.referencias = []
             st.rerun()
-    else:
-        refs_activas = [] # Lista vacía si no hay nada
 
     st.divider()
 
-    # --- ÁREA DE PROMPT IMPROVER (INTEGRACIÓN NUEVA) ---
-    st.subheader("2. Composición del Prompt")
-
-    col1, col2 = st.columns([1, 1])
-
-    with col1:
-        st.markdown("**Idea Base**")
-        prompt_input = st.text_area("Describe tu idea brevemente:", 
-                                  height=150,
-                                  placeholder="Ej: Casa moderna de hormigón en el bosque, lluvia...",
-                                  key="input_base")
+    # --- ZONA 2: ULTIMATE PROMPT ENGINE (Lógica JSON) ---
+    st.subheader("2. Ultimate Prompt Engine")
+    
+    col_input, col_output = st.columns([1, 1])
+    
+    with col_input:
+        st.markdown("**Entrada de Comandos**")
+        user_command = st.text_area("Escribe aquí (ej: 'improve: casa en el lago')", height=150, key="cmd_input")
         
-        # Lógica del Prompt Improver
-        if st.button("🪄 Mejorar con Estructura Ultimate"):
-            if prompt_input:
-                with st.spinner("Consultando base de conocimientos de estilos..."):
+        if st.button("🪄 Procesar Comando", type="primary"):
+            if user_command:
+                with st.spinner("Ejecutando lógica Ultimate Prompt..."):
                     try:
-                        # Usamos Gemini Flash (rápido) para simular la estructura JSON del repositorio
-                        sistema_prompt = """
-                        Act as an expert Prompt Engineer utilizing the 'Ultimate AI Prompt Generator' structure.
-                        Analyze the user's request and rewrite it into a single, cohesive, comma-separated prompt following this specific order:
-                        
-                        1. **Subject**: Refine the core subject.
-                        2. **Medium**: (e.g., Professional Architectural Photography, 3D Render).
-                        3. **Style**: (e.g., Brutalist, Minimalist, Contemporary).
-                        4. **Lighting**: (e.g., Golden hour, Volumetric lighting, Soft overcast).
-                        5. **Color**: (e.g., Earthy tones, Cool palette, High contrast).
-                        6. **Materials/Texture**: (e.g., Raw concrete, Travertine, Glass).
-                        7. **Technical**: (e.g., 8k, Unreal Engine 5, Octane Render, Ray Tracing, Wide angle lens).
-                        
-                        Output ONLY the final English prompt. No explanations.
-                        """
-                        
-                        response_improver = client.models.generate_content(
+                        # Usamos Gemini Flash como el motor lógico del JSON
+                        response_logic = client.models.generate_content(
                             model="gemini-2.5-flash",
-                            contents=f"{sistema_prompt}\n\nUSER INPUT: {prompt_input}"
+                            contents=f"{SYSTEM_INSTRUCTION_ULTIMATE}\n\nINPUT COMMAND: {user_command}"
                         )
-                        
-                        # Actualizamos el estado para que aparezca en la columna derecha
-                        st.session_state.prompt_actual = response_improver.text.strip()
-                        st.rerun() # Recargamos para mostrar el resultado
+                        st.session_state.prompt_final = response_logic.text.strip()
+                        st.rerun()
                     except Exception as e:
-                        st.error(f"Error al mejorar prompt: {e}")
+                        st.error(f"Error en el motor de comandos: {e}")
             else:
-                st.warning("Escribe una idea base primero.")
+                st.warning("Escribe un comando primero.")
 
-    with col2:
-        st.markdown("**Prompt Final (Editable)**")
-        # Este es el prompt que finalmente se usará. El usuario puede tocarlo.
-        # El value viene del session_state para persistir la mejora de la AI
-        prompt_final_usuario = st.text_area("Revisa y ajusta antes de generar:", 
-                                            value=st.session_state.prompt_actual,
-                                            height=150,
-                                            key="txt_final")
+    with col_output:
+        st.markdown("**Resultado (Prompt Final)**")
+        st.caption("Aquí puedes editar el resultado antes de generar la imagen.")
+        # El usuario ve el resultado del comando y puede modificarlo manualmente
+        prompt_para_generar = st.text_area("Prompt Listo:", 
+                                         value=st.session_state.prompt_final, 
+                                         height=150,
+                                         key="final_output")
         
-        # Actualizamos el estado si el usuario edita manualmente
-        if prompt_final_usuario != st.session_state.prompt_actual:
-            st.session_state.prompt_actual = prompt_final_usuario
+        # Sincronización manual si el usuario edita
+        if prompt_para_generar != st.session_state.prompt_final:
+            st.session_state.prompt_final = prompt_para_generar
 
-    # --- BOTÓN DE GENERACIÓN ---
+    # --- ZONA 3: GENERACIÓN ---
     st.divider()
     
-    # Inyectamos el formato y la resolución en el prompt técnico
-    prompt_tecnico_completo = f"{prompt_final_usuario}, aspect ratio {aspect_ratio}, detailed output {upscale_option}"
-
-    if st.button("Generar Visualización ✨", type="primary"):
-        if prompt_final_usuario:
+    if st.button("🎨 Generar Imagen Final", use_container_width=True):
+        if prompt_para_generar:
             with st.status("Renderizando...", expanded=False) as status:
                 try:
-                    # Construcción de la solicitud Multimodal
-                    contenido_solicitud = [prompt_tecnico_completo] + refs_activas
-
-                    st.write(f"Invocando {modelo_nombre}...")
+                    # Construcción de solicitud
+                    # CORRECCIÓN IMPORTANTE: Manejo de lista vacía de referencias
+                    contenido_solicitud = [prompt_para_generar]
                     
+                    if refs_activas:
+                        contenido_solicitud = contenido_solicitud + refs_activas
+                        st.write(f"Usando {len(refs_activas)} imágenes de referencia + Texto.")
+                    else:
+                        st.write("Generando solo con Texto (Zero-shot).")
+
+                    # Llamada a API
                     response = client.models.generate_content(
                         model=model_map[modelo_nombre],
                         contents=contenido_solicitud,
@@ -167,7 +177,7 @@ if check_password():
                         )
                     )
 
-                    # Validación de respuesta
+                    # Procesamiento de respuesta
                     if response and response.parts:
                         resultado = None
                         for part in response.parts:
@@ -176,32 +186,31 @@ if check_password():
                                 break
                         
                         if resultado:
-                            # Guardar en historial
                             st.session_state.historial.insert(0, resultado)
                             if len(st.session_state.historial) > 5:
                                 st.session_state.historial.pop()
-
+                            
                             st.subheader("Resultado")
-                            st.image(resultado, use_container_width=True, caption=f"Prompt: {prompt_final_usuario[:50]}...")
-                            status.update(label="Generación exitosa", state="complete")
+                            st.image(resultado, use_container_width=True)
+                            status.update(label="¡Imagen creada!", state="complete")
                         else:
-                            st.error("El modelo no devolvió una imagen válida.")
+                            st.error("El modelo no devolvió imagen (Bloqueo de seguridad o error interno).")
                     else:
-                        st.error("La API no devolvió contenido (Posible filtro de seguridad).")
+                        st.error("Error: La API devolvió una respuesta vacía.")
 
                 except Exception as e:
-                    st.error(f"Error detectado: {e}")
+                    st.error(f"Error crítico: {e}")
         else:
-            st.warning("El campo de Prompt Final está vacío. Usa el mejorador o escribe algo.")
+            st.warning("El campo de Prompt Final está vacío. Usa un comando o escribe algo.")
 
     # --- HISTORIAL ---
     if st.session_state.historial:
         st.divider()
-        st.subheader("Historial Reciente")
+        st.subheader("Galería Reciente")
         h_cols = st.columns(5)
         for i, h_img in enumerate(st.session_state.historial):
             with h_cols[i]:
                 st.image(h_img, use_container_width=True)
                 buf = BytesIO()
-                h_img.save(buf, format="JPEG")
-                st.download_button(f"Descargar", buf.getvalue(), f"archviz_{i}.jpg", "image/jpeg", key=f"dl_{i}")
+                h_img.save(buf, format="PNG")
+                st.download_button("💾", buf.getvalue(), f"gen_{i}.png", "image/png", key=f"dl_{i}")
