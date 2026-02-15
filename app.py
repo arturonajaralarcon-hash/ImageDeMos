@@ -9,22 +9,16 @@ import os
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Image Gen DeMos", layout="wide", page_icon="🏗️")
 
-# --- CARGADOR DE DATOS JSON (ESTILOS Y MATERIALES) ---
+# --- CARGADOR DE DATOS JSON ---
 @st.cache_data
 def load_json_data(folder_path="data"):
-    """
-    Carga bibliotecas de estilos, iluminación y cámaras desde la carpeta 'data'.
-    Ideal para ArchViz: styles.json, materials.json, lighting.json
-    """
     data_context = {}
-    
     if not os.path.exists(folder_path):
-        return None, "⚠️ Carpeta 'data' no encontrada. Crea la carpeta en tu proyecto."
+        return None, "⚠️ Carpeta 'data' no encontrada."
     
     files = [f for f in os.listdir(folder_path) if f.endswith('.json')]
-    
     if not files:
-        return None, "⚠️ Carpeta 'data' vacía. Sube tus JSONs de estilos."
+        return None, "⚠️ Carpeta 'data' vacía."
 
     try:
         for filename in files:
@@ -48,19 +42,19 @@ if "json_data" not in st.session_state:
     st.session_state.json_data = data
     st.session_state.json_msg = msg
 
-# --- SEGURIDAD (Regresamos a la clave de DeMos) ---
+# --- SEGURIDAD ---
 PASSWORD_ACCESO = "archviz2026"
 
 def check_password():
     if "authenticated" not in st.session_state:
-        st.sidebar.title("Acceso DeMos")
-        pwd = st.sidebar.text_input("Contraseña", type="password")
-        if st.sidebar.button("Entrar"):
+        st.sidebar.title("Acceso DeMos") # Mantenemos sidebar solo para login si es necesario, o lo movemos al centro
+        pwd = st.text_input("Contraseña de Acceso", type="password")
+        if st.button("Entrar"):
             if pwd == PASSWORD_ACCESO:
                 st.session_state.authenticated = True
                 st.rerun()
             else:
-                st.sidebar.error("Incorrecta")
+                st.error("Incorrecta")
         return False
     return True
 
@@ -69,44 +63,77 @@ if check_password():
 
     # --- ENCABEZADO ---
     st.title("Image Gen DeMos 🏗️")
-    st.caption("ArchViz Specialized | Nano Banana Series + Ultimate Prompt Engine")
+    st.caption("ArchViz Specialized | Nano Banana Series")
 
-    with st.expander("📘 Guía de Comandos ArchViz", expanded=True):
+    # --- TEXTO DE BIENVENIDA / TUTORIAL ---
+    with st.expander("📘 Glosario de Palabras Clave y Tutorial (PromptAssistantGEM)", expanded=False):
         st.markdown("""
-        **Motor de Mejora de Prompts para Arquitectura.**
-        Usa tus archivos JSON para generar descripciones técnicas precisas.
+        **Para ayudarte a comenzar, aquí tienes una lista de las palabras clave disponibles y sus funciones dentro del sistema PromptAssistantGEM:**
 
-        **Comandos:**
-        * `improve: <idea>` -> Aplica terminología técnica (Iluminación, Materiales, Cámara) basada en tus JSONs.
-        * `style: <estilo>` -> Busca estilos específicos (ej: Brutalism, Parametric) en tu base de datos.
-        * `edit: <texto>` -> Ajustes rápidos de redacción.
+        ### Glosario de Palabras Clave
+        * **Help:** Proporciona esta lista de palabras clave y explica brevemente sus funciones.
+        * **Set / Settings:** Muestra los parámetros fijos activos (como la relación de aspecto) y permite modificarlos.
+        * **Platform:** Cambia la plataforma de IA específica para la cual se escriben los prompts (ej. Midjourney, DALL-E, Gemini).
+        * **Improve:** Mejora un prompt simple del usuario convirtiéndolo en una versión detallada y de alta calidad.
+        * **Improve edit:** Un activador especializado para la edición de imágenes. Traduce comandos basados en formas (como "Eliminar ROJO") en instrucciones detalladas.
+        * **Multiple:** Genera varias opciones diferentes del mismo prompt. Ejemplo: Multiple: 3.
+        * **Chance:** Modifica el prompt o añade texto según se solicite. Fórmula: cambios + (to) 'prompt original'.
+        * **Describe:** Analiza una imagen cargada y la convierte en un prompt basado en una categoría. Ejemplo: Describe + architectural.
+        * **Reference:** Toma características específicas de una imagen cargada (paleta de colores, atmósfera) para usarlas en el siguiente prompt.
+        * **Original:** Devuelve y une todos los prompts iniciales y cambios realizados durante la sesión.
+        * **Question:** Responde dudas sobre ingeniería de prompts y ofrece recomendaciones específicas.
+        * **Clear / clean:** Olvida todo el trabajo anterior y comienza desde cero.
+
+        ### Categorías Especializadas
+        Si tu prompt comienza con *Architectural* o *Interior Design*, el asistente utiliza "Recetas" específicas:
+        * **Architectural Recipe:** Incluye Ángulo de cámara, Tipo de imagen, Estilo, Tipo de edificio, Inspiración, Punto focal, Materiales, Iluminación y Estado de ánimo.
+        * **Interior Design Recipe:** Incluye Ángulo de cámara, Tipo de habitación, Estilo, Marca, Punto focal, Texturas e Iluminación.
+        * **Brainstorm / Brainstorming:** Ofrece ideas congruentes y creativas para mejorar el prompt.
+        * **Missing Parts:** Identifica parámetros faltantes y sugiere mejoras para completarlos.
+
+        ### Tutorial Corto
+        1.  **Define tus Ajustes:** Comienza indicando si prefieres una relación de aspecto.
+        2.  **Combina Palabras Clave:** "Reference: color palette, Improve: un gato negro durmiendo en un sofá. Multiple: 2".
+        3.  **Refina Ediciones:** "Improve edit: una foto de un escritorio, Remove RED marked shapes, insert in BLUE a vintage laptop".
+        
+        *¿Cómo te gustaría empezar? ¿Deseas aplicar algún ajuste predeterminado para esta sesión?*
         """)
         
+        # Estado de carga de JSONs
         if st.session_state.json_msg and "✅" in st.session_state.json_msg:
             st.success(st.session_state.json_msg)
         else:
-            st.warning(st.session_state.json_msg or "Cargando...")
+            st.warning(st.session_state.json_msg or "Cargando JSONs...")
 
-    # --- SIDEBAR ---
-    with st.sidebar:
-        st.header("Ajustes de Render")
-        modelo_nombre = st.selectbox("Motor", [
+    st.divider()
+
+    # --- CONTROLES SUPERIORES (SIN SIDEBAR) ---
+    c_controls_1, c_controls_2, c_controls_3 = st.columns([2, 1, 1])
+    
+    with c_controls_1:
+        modelo_nombre = st.selectbox("Motor de Render", [
             "Nano Banana Pro (Gemini 3 Pro Image)",
             "Nano Banana (Gemini 2.5 Flash Image)"
         ])
-        
         model_map = {
             "Nano Banana Pro (Gemini 3 Pro Image)": "gemini-3-pro-image-preview",
             "Nano Banana (Gemini 2.5 Flash Image)": "gemini-2.5-flash-image"
         }
-        
-        if st.button("Recargar JSONs 🔄"):
+
+    with c_controls_2:
+        st.write("") # Espaciador vertical
+        st.write("") 
+        if st.button("Recargar JSONs 🔄", use_container_width=True):
             st.cache_data.clear()
             st.rerun()
+            
+    with c_controls_3:
+        # Espacio para futuro botón o vacío
+        pass
 
-    # --- ZONA 1: BIBLIOTECA DE REFERENCIAS (Visual Context) ---
-    st.subheader("1. Contexto Visual")
-    uploaded_files = st.file_uploader("Arrastra planos, bocetos o referencias de estilo", 
+    # --- ZONA 1: REFERENCIAS ---
+    st.subheader("1. Contexto Visual (Referencias)")
+    uploaded_files = st.file_uploader("Sube planos o referencias de estilo", 
                                      type=["png", "jpg", "jpeg"], accept_multiple_files=True)
     
     if uploaded_files:
@@ -126,77 +153,74 @@ if check_password():
         if st.button("Limpiar Biblioteca"):
             st.session_state.referencias = []
             st.rerun()
-    else:
-        st.info("Sin referencias cargadas. Se generará renderizado 'Zero-shot' (solo texto).")
 
     st.divider()
 
-    # --- ZONA 2: ULTIMATE PROMPT ENGINE (Lógica JSON para Arquitectura) ---
+    # --- ZONA 2: ULTIMATE PROMPT ENGINE (VERTICAL) ---
     st.subheader("2. Composición de Prompt")
     
-    col_input, col_output = st.columns(2)
+    # 2.1 Entrada
+    st.markdown("**Entrada de Comandos**")
+    cmd_input = st.text_area("Escribe tu comando (ej: 'Architectural Recipe: Museo moderno' o 'Improve: casa de playa')", height=100)
     
-    with col_input:
-        cmd_input = st.text_area("Comando (ej: improve: museo de arte moderno en el desierto):", height=150)
-        
-        if st.button("Mejorar Prompt 🪄", type="primary"):
-            if cmd_input:
-                with st.spinner("Consultando biblioteca de materiales y luces..."):
-                    try:
-                        # Preparamos los datos JSON para el prompt del sistema
-                        json_context = json.dumps(st.session_state.json_data, indent=2, ensure_ascii=False) if st.session_state.json_data else "No specific JSON data."
-                        
-                        # Prompt especializado en Arquitectura
-                        system_prompt = f"""
-                        You are an Expert Architectural Visualization Prompt Engineer.
-                        I have loaded a library of architectural styles, materials, and lighting in JSON format:
-                        {json_context}
+    # 2.2 Botón de Acción
+    if st.button("Ejecutar PromptAssistantGEM 🪄", type="primary", use_container_width=True):
+        if cmd_input:
+            with st.spinner("Aplicando recetas y estilos JSON..."):
+                try:
+                    # Preparamos contexto
+                    json_context = json.dumps(st.session_state.json_data, indent=2, ensure_ascii=False) if st.session_state.json_data else "No JSON data."
+                    
+                    # Prompt del Sistema actualizado con TU GLOSARIO
+                    system_prompt = f"""
+                    You are 'PromptAssistantGEM', an advanced CLI for ArchViz Prompt Engineering.
+                    
+                    I have loaded a library of styles/materials in JSON:
+                    {json_context}
 
-                        YOUR TASK:
-                        Analyze the user command.
-                        1. If command is 'improve:': Create a photorealistic ArchViz prompt. Use specific terms from the JSON data (e.g., specific concrete types, glass properties, camera lenses).
-                        2. Structure: Subject (Building/Interior) + Architecture Style + Environment/Lighting + Materials + Technical Specs (Renderer, Resolution).
-                        3. Output ONLY the final prompt text.
+                    YOUR RULES BASED ON USER GLOSSARY:
+                    1. 'Improve:': Convert simple input into high-quality detailed prompt using JSON terms.
+                    2. 'Architectural Recipe': Must include Camera Angle, Image Type, Style, Building Type, Inspiration, Focal Point, Materials, Lighting, Mood.
+                    3. 'Interior Design Recipe': Must include Camera Angle, Room Type, Style, Brand, Focal Point, Textures, Lighting.
+                    4. 'Platform:': Optimize terminology for the specified AI (Midjourney, Gemini, etc).
+                    5. 'Multiple:': If requested, provide options.
+                    
+                    TASK: Analyze the USER COMMAND and output ONLY the final optimized prompt text ready for rendering.
+                    
+                    USER COMMAND: {cmd_input}
+                    """
+                    
+                    res = client.models.generate_content(
+                        model="gemini-2.5-flash",
+                        contents=system_prompt
+                    )
+                    st.session_state.prompt_final = res.text.strip()
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error en motor de prompts: {e}")
+        else:
+            st.warning("Escribe un comando primero.")
 
-                        USER COMMAND: {cmd_input}
-                        """
-                        
-                        # Usamos Flash para la lógica de texto
-                        res = client.models.generate_content(
-                            model="gemini-2.5-flash",
-                            contents=system_prompt
-                        )
-                        st.session_state.prompt_final = res.text.strip()
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Error en motor de prompts: {e}")
-            else:
-                st.warning("Escribe una idea base.")
+    # 2.3 Salida (Debajo del botón)
+    st.markdown("**Prompt Final (Editable)**")
+    final_prompt = st.text_area("Resultado optimizado:", 
+                              value=st.session_state.prompt_final, 
+                              height=150, 
+                              key="fp_area")
+    
+    if final_prompt != st.session_state.prompt_final:
+        st.session_state.prompt_final = final_prompt
 
-    with col_output:
-        st.markdown("**Prompt Final (Editable)**")
-        final_prompt = st.text_area("Resultado para Render:", 
-                                  value=st.session_state.prompt_final, 
-                                  height=150, 
-                                  key="fp_area")
-        
-        if final_prompt != st.session_state.prompt_final:
-            st.session_state.prompt_final = final_prompt
-
-    # --- ZONA 3: GENERACIÓN ---
+    # --- ZONA 3: GENERACIÓN DE IMAGEN ---
     st.divider()
     
-    if st.button("Generar Render ✨", use_container_width=True):
+    if st.button("Generar Render Final ✨", use_container_width=True):
         if st.session_state.prompt_final:
-            with st.status("Procesando imagen...", expanded=False) as status:
+            with st.status("Renderizando...", expanded=False) as status:
                 try:
-                    # Construcción de la solicitud
-                    # Para DeMos, simplemente combinamos el prompt técnico + las referencias visuales
                     prompt_render = f"High quality architectural visualization. {st.session_state.prompt_final}"
-                    
                     contenido_solicitud = [prompt_render] + refs_activas
                     
-                    # Llamada al modelo
                     response = client.models.generate_content(
                         model=model_map[modelo_nombre],
                         contents=contenido_solicitud,
@@ -205,7 +229,6 @@ if check_password():
                         )
                     )
                     
-                    # Validación
                     if response and response.parts:
                         img_result = None
                         for part in response.parts:
@@ -222,9 +245,9 @@ if check_password():
                             st.image(img_result, use_container_width=True, caption="Render DeMos")
                             status.update(label="Renderizado completo", state="complete")
                         else:
-                            st.error("El modelo no generó imagen. Posible filtro de seguridad o prompt muy complejo.")
+                            st.error("No se generó imagen (Posible filtro de seguridad).")
                     else:
-                        st.error("Error de API: Respuesta vacía.")
+                        st.error("Error API.")
                         
                 except Exception as e:
                     st.error(f"Error crítico: {e}")
