@@ -136,7 +136,6 @@ with c_controls_1:
             "Nano Banana (Gemini 2.5 Flash Image)": "gemini-2.5-flash-image",
             "Imagen 4.0 (Generativo)": "imagen-4.0-generate-001" # <--- 2. AÑADE ESTA LÍNEA (ID DEL MODELO)
         }
-
     with c_controls_2:
         st.write("") 
         st.write("") 
