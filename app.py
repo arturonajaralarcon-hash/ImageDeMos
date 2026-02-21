@@ -8,15 +8,98 @@ import os
 import time
 
 # --- CONFIGURACIÓN DE PÁGINA ---
-st.set_page_config(page_title="Generador de imagen DeMos", layout="wide", page_icon="😸")
+# ==========================================
+# 1. CONFIGURACIÓN VISUAL (ESTILO TÉCNICO)
+# ==========================================
+st.set_page_config(page_title="Achviz Specialist", layout="wide", page_icon="😸")
 
-# --- FUNCIONES DE UTILIDAD ---
-def upscale_image(image, target_width=3840): 
-    w_percent = (target_width / float(image.size[0]))
-    h_size = int((float(image.size[1]) * float(w_percent)))
-    img_resized = image.resize((target_width, h_size), PIL.Image.Resampling.LANCZOS)
-    return img_resized
+st.markdown("""
+<style>
+    /* TIPOGRAFÍA TÉCNICA */
+    p, h1, h2, h3, h4, h5, h6, div, span, label, button, input, textarea, li {
+        font-family: 'Consolas', 'Courier New', monospace;
+    }
 
+    /* VARIABLES DE COLOR (ADAPTATIVO) */
+    :root {
+        --fondo-app: #EAEAEA;
+        --texto-app: #333333;
+        --fondo-input: #FFFFFF;
+        --borde: #333333;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --fondo-app: #333333;
+            --texto-app: #EAEAEA;
+            --fondo-input: #444444;
+            --borde: #EAEAEA;
+        }
+    }
+
+    /* ESTILOS GENERALES */
+    .stApp { background-color: var(--fondo-app); color: var(--texto-app); }
+    p, h1, h2, h3, h4, label, li, .stMarkdown { color: var(--texto-app) !important; }
+
+    /* BOTONES */
+    button, div.stButton > button, div.stDownloadButton > button, [data-testid="stFileUploader"] button {
+        background-color: transparent !important;
+        color: var(--texto-app) !important;
+        border: 2px dashed var(--borde) !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+    button:hover, div.stButton > button:hover, div.stDownloadButton > button:hover, [data-testid="stFileUploader"] button:hover {
+        background-color: var(--borde) !important;
+        color: var(--fondo-app) !important;
+        border-style: solid !important;
+    }
+
+    /* INPUTS */
+    .stTextInput > div > div, div[data-baseweb="select"] > div, .stTextArea > div > div {
+        background-color: var(--fondo-input) !important;
+        border: 1px solid var(--borde) !important;
+        color: var(--texto-app) !important;
+    }
+    .stTextInput input, .stTextArea textarea { color: var(--texto-app) !important; }
+    
+    /* DROPDOWNS */
+    div[data-baseweb="popover"], div[data-baseweb="menu"] {
+        background-color: var(--fondo-input) !important;
+        border: 1px solid var(--borde) !important;
+    }
+    div[data-baseweb="option"], li[data-baseweb="option"] { color: var(--texto-app) !important; }
+
+    /* FILE UPLOADER */
+    [data-testid="stFileUploader"] {
+        background-color: var(--fondo-input) !important;
+        border: 1px dashed var(--borde) !important;
+    }
+    [data-testid="stFileUploaderDropzone"] div, [data-testid="stFileUploaderDropzone"] span, [data-testid="stFileUploaderDropzone"] small {
+        color: var(--texto-app) !important;
+    }
+
+    /* EXPANDER */
+    .streamlit-expanderHeader {
+        background-color: var(--fondo-input) !important;
+        color: var(--texto-app) !important;
+        border: 1px dashed var(--borde) !important;
+    }
+    .streamlit-expanderContent {
+        border: 1px dashed var(--borde) !important;
+        border-top: none;
+        color: var(--texto-app) !important;
+    }
+    .streamlit-expanderHeader svg { fill: var(--texto-app) !important; }
+    
+    /* BARRA PROGRESO */
+    .stProgress > div > div > div > div { background-color: var(--texto-app) !important; }
+    
+    hr { border-top: 1px solid var(--borde) !important; }
+    #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
 # --- CARGADOR DE DATOS JSON ---
 @st.cache_data
 def load_json_data(folder_path="data"):
@@ -60,7 +143,7 @@ except Exception:
 
 def check_password():
     if "authenticated" not in st.session_state:
-        st.title("Acceso DeMos")
+        st.title("Acceso")
         pwd = st.text_input("Contraseña", type="password")
         if st.button("Entrar"):
             if pwd == PASSWORD_ACCESO:
@@ -136,7 +219,7 @@ if check_password():
         for i, ref in enumerate(st.session_state.referencias):
             with cols_refs[i % 6]:
                 st.image(ref["img"], use_container_width=True)
-                if st.checkbox("✅ Preparar", key=f"chk_orig_{i}"):
+                if st.checkbox("Preparar", key=f"chk_orig_{i}"):
                     refs_activas.append(ref["img"].convert("RGB"))
 
     st.divider()
