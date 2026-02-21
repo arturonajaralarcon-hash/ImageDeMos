@@ -100,6 +100,7 @@ st.markdown("""
     #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
+
 # --- CARGADOR DE DATOS JSON ---
 @st.cache_data
 def load_json_data(folder_path="data"):
@@ -158,7 +159,7 @@ if check_password():
     client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
 
     # --- ENCABEZADO ---
-    st.title("Generador de Imagen DeMos")
+    st.title("Ultimate Archiviz Generator")
     st.caption("ArchViz Specialized | Nano Banana Series & Imagen 3")
 
     with st.expander("📘 Glosario de Palabras Clave y Tutorial", expanded=False):
