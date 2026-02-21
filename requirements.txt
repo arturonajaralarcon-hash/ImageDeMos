@@ -1,5 +1,5 @@
 streamlit
 google-genai
 Pillow
-streamlit-drawable-canvas
+git+https://github.com/bowespublishing/streamlit-drawable-canvas.git
 numpy
