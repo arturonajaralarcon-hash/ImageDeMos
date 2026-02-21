@@ -113,15 +113,29 @@ if check_password():
     with c_controls_3:
         pass
 
-    # --- ZONA 1: REFERENCIAS Y PORTAPAPELES ---
+# --- ZONA 1: REFERENCIAS Y PORTAPAPELES ---
     st.subheader("1. Imagenes de Referencia")
-    st.info("💡 **Tip de Edición Rápida:** Haz clic en el recuadro de abajo y presiona **Ctrl + V** para pegar directamente imágenes desde tu portapapeles (por ejemplo, recién pintadas en Paint).")
     
-    uploaded_files = st.file_uploader("Sube o pega fotos para analizar o editar (Modo Máscara)", 
-                                     type=["png", "jpg", "jpeg"], accept_multiple_files=True)
+    # Dividimos la pantalla en dos cuadros como pediste
+    c_subir, c_pegar = st.columns(2)
     
-    if uploaded_files:
-        for f in uploaded_files:
+    with c_subir:
+        st.markdown("**📂 Subir archivo guardado**")
+        uploaded_files = st.file_uploader("Usa el botón para buscar en tu PC", 
+                                         type=["png", "jpg", "jpeg"], accept_multiple_files=True, key="up_normal")
+        
+    with c_pegar:
+        st.markdown("**📋 Pegar desde Portapapeles (Paint)**")
+        st.info("👉 Haz clic dentro del recuadro de abajo (área gris) y presiona **Ctrl + V**")
+        # El label_visibility="collapsed" oculta el texto para que parezca solo un área de pegado
+        pasted_files = st.file_uploader("Área de pegado", 
+                                         type=["png", "jpg", "jpeg"], accept_multiple_files=True, key="up_paste", label_visibility="collapsed")
+    
+    # Unificamos las imágenes que lleguen de cualquiera de los dos cuadros
+    todos_los_archivos = (uploaded_files or []) + (pasted_files or [])
+    
+    if todos_los_archivos:
+        for f in todos_los_archivos:
             img = PIL.Image.open(f)
             if not any(d['name'] == f.name for d in st.session_state.referencias):
                 st.session_state.referencias.append({"img": img, "name": f.name})
@@ -133,7 +147,7 @@ if check_password():
             st.session_state.referencias = []
             st.rerun()
             
-        cols_refs = st.columns(6) # Mostramos las referencias de forma compacta
+        cols_refs = st.columns(6) 
         for i, ref in enumerate(st.session_state.referencias):
             with cols_refs[i % 6]:
                 st.image(ref["img"], use_container_width=True)
