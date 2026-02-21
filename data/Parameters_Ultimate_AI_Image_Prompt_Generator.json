@@ -3,36 +3,95 @@
     "usageNotes": [
       "Feel free to be creative and add context and various details to the prompt.",
       "At the end of the prompt, use any necessary parameters.",
-      "Not all categories must be used in every prompt."
+      "Not all categories must be used in every prompt.",
+      "To achieve a Natural/UGC aesthetic, combine candid image types, camera imperfections, human factor, and lived-in clutter."
     ],
     "sharedParameters": {
-      "cameraAngle": ["Eye-level", "Low Angle", "High Angle", "Bird's Eye View", "Worm's Eye View", "Dutch Angle", "Over-the-shoulder", "Ground-level", "Aerial View", "Tilted", "Close-up", "Wide Angle", "Medium Shot", "Long Shot", "Panoramic", "Side View", "Front View", "Rear View", "Diagonal", "Symmetrical", "Asymmetrical", "Three-quarter View", "Top-down", "Bottom-up"],
-      "imageType": ["Photograph", "Sketch", "Watercolor", "Prismacolor", "Pencil Drawing", "Ink Drawing", "Digital Rendering", "Oil Painting", "Acrylic Painting", "Charcoal Drawing", "Pastel Drawing", "Collage", "Mixed Media", "3D Model", "Blueprint", "CAD Drawing", "Architectural Visualization", "Etching", "Lithograph", "Fresco", "Mosaic", "Graphic Design", "Photomontage", "Woodcut Print"],
-      "colorPalette": ["Neutral Tones", "Earthy Hues", "Dark Tones", "Rich Colors", "Cool Tones", "Warm Tones", "Pastels", "Monochromatic", "Muted Colors", "Natural Colors", "Bright Colors", "Primary Colors", "Secondary Colors", "Tertiary Colors", "Analogous Colors", "Complementary Colors", "Split-Complementary Colors", "Tetradic Colors", "Custom Palette", "Gradient", "Black and White", "Sepia", "Soft Tones", "Bright Tones"],
-      "lighting": ["Soft, Natural Light", "Diffused, Overcast", "Bright, Even Lighting", "Golden Hour Light", "Harsh High Contrast", "Backlighting", "Side Lighting", "Front Lighting", "Silhouette Lighting", "Reflective Light", "Twilight Lighting", "Sunset Lighting", "Sunrise Lighting", "Moonlight", "Artificial Lighting", "Spotlight", "Candlelight", "Shadow Play", "Ambient Lighting", "Street Lighting", "Accent Lighting", "Flood Lighting", "Diffused Morning Light", "Dramatic Lighting"],
-      "location": ["Urban", "Historic City", "Coastal Town", "Countryside", "Suburban Area", "Mountainous Region", "Desert", "Island", "Forest", "Riverfront", "Lakefront", "Park", "Plaza", "Campus", "Industrial Area", "Residential Neighborhood", "Downtown", "Seaside", "Hilltop", "Valley", "Rural Village", "Resort", "Winery", "Marina"],
-      "timeOfDay": ["Morning", "Afternoon", "Noon", "Sunset", "Evening", "Night", "Twilight", "Dawn", "Dusk", "Golden Hour", "Blue Hour", "Midday", "Pre-dawn", "Late Morning", "Early Afternoon", "Late Afternoon", "Early Evening", "Midnight", "Pre-dusk", "High Noon", "Late Night", "Early Morning", "Mid-evening"],
-      "mood": ["Calm", "Serene", "Mysterious", "Majestic", "Innovative", "Dynamic", "Relaxing", "Inviting", "Bold", "Stark", "Nostalgic", "Cozy", "Peaceful", "Reflective", "Exciting", "Energetic", "Tranquil", "Intimate", "Solemn", "Joyful", "Vibrant", "Rustic", "Chic", "Industrial"]
+      "cameraAngle": [
+        "Eye-level", "Low Angle", "High Angle", "Bird's Eye View", "Worm's Eye View", "Dutch Angle", "Over-the-shoulder", "Ground-level", "Aerial View", "Tilted", "Close-up", "Wide Angle", "Medium Shot", "Long Shot", "Panoramic", "Side View", "Front View", "Rear View", "Diagonal", "Symmetrical", "Asymmetrical", "Three-quarter View", "Top-down", "Bottom-up", 
+        "Candid Snapshot", "Smartphone Eye-level", "Slightly Tilted POV", "Security Camera Angle", "Dashcam Perspective", "Selfie Perspective"
+      ],
+      "imageType": [
+        "Photograph", "Sketch", "Watercolor", "Prismacolor", "Pencil Drawing", "Ink Drawing", "Digital Rendering", "Oil Painting", "Acrylic Painting", "Charcoal Drawing", "Pastel Drawing", "Collage", "Mixed Media", "3D Model", "Blueprint", "CAD Drawing", "Architectural Visualization", "Etching", "Lithograph", "Fresco", "Mosaic", "Graphic Design", "Photomontage", "Woodcut Print",
+        "Smartphone Photo", "Polaroid", "35mm Film Snapshot", "UGC Photo", "Disposable Camera Photo", "Candid Amateur Photograph"
+      ],
+      "colorPalette": [
+        "Neutral Tones", "Earthy Hues", "Dark Tones", "Rich Colors", "Cool Tones", "Warm Tones", "Pastels", "Monochromatic", "Muted Colors", "Natural Colors", "Bright Colors", "Primary Colors", "Secondary Colors", "Tertiary Colors", "Analogous Colors", "Complementary Colors", "Split-Complementary Colors", "Tetradic Colors", "Custom Palette", "Gradient", "Black and White", "Sepia", "Soft Tones", "Bright Tones",
+        "Washed Out Colors", "Vintage Film Tones", "Over-saturated Smartphone Colors"
+      ],
+      "lighting": [
+        "Soft, Natural Light", "Diffused, Overcast", "Bright, Even Lighting", "Golden Hour Light", "Harsh High Contrast", "Backlighting", "Side Lighting", "Front Lighting", "Silhouette Lighting", "Reflective Light", "Twilight Lighting", "Sunset Lighting", "Sunrise Lighting", "Moonlight", "Artificial Lighting", "Spotlight", "Candlelight", "Shadow Play", "Ambient Lighting", "Street Lighting", "Accent Lighting", "Flood Lighting", "Diffused Morning Light", "Dramatic Lighting",
+        "Harsh Smartphone Flash", "Mixed Temperature Lighting", "Overexposed Window Light", "Fluorescent Glare", "Uneven Natural Light"
+      ],
+      "location": [
+        "Urban", "Historic City", "Coastal Town", "Countryside", "Suburban Area", "Mountainous Region", "Desert", "Island", "Forest", "Riverfront", "Lakefront", "Park", "Plaza", "Campus", "Industrial Area", "Residential Neighborhood", "Downtown", "Seaside", "Hilltop", "Valley", "Rural Village", "Resort", "Winery", "Marina"
+      ],
+      "timeOfDay": [
+        "Morning", "Afternoon", "Noon", "Sunset", "Evening", "Night", "Twilight", "Dawn", "Dusk", "Golden Hour", "Blue Hour", "Midday", "Pre-dawn", "Late Morning", "Early Afternoon", "Late Afternoon", "Early Evening", "Midnight", "Pre-dusk", "High Noon", "Late Night", "Early Morning", "Mid-evening"
+      ],
+      "mood": [
+        "Calm", "Serene", "Mysterious", "Majestic", "Innovative", "Dynamic", "Relaxing", "Inviting", "Bold", "Stark", "Nostalgic", "Cozy", "Peaceful", "Reflective", "Exciting", "Energetic", "Tranquil", "Intimate", "Solemn", "Joyful", "Vibrant", "Rustic", "Chic", "Industrial",
+        "Lived-in", "Everyday", "Authentic", "Bustling", "Casual", "Imperfectly Cozy", "Chaotic but Warm"
+      ],
+      "cameraImperfections": [
+        "Film Grain", "Slight Motion Blur", "Lens Flare", "Chromatic Aberration", "Low-light Noise", "Slightly Out of Focus", "Vignetting", "Dust Scratches", "Overblown Highlights", "Crooked Horizon"
+      ],
+      "humanFactor": [
+        "Blurred Pedestrians", "Person holding a coffee", "Pets lounging", "Hands in frame", "Children playing", "Silhouette in window", "Someone walking away", "Casual bystanders", "Person interacting with space"
+      ],
+      "livedInClutter": [
+        "Unmade Bed", "Coffee Mugs on Table", "Wrinkled Throw Blanket", "Scattered Shoes", "Open Laptop and Cables", "Keys and Mail on Counter", "Fallen Leaves", "Slightly Crooked Rug", "Stack of Magazines", "Used Kitchen Utensils", "Cooking ingredients scattered on counter", "Potted plant with a yellowing leaf"
+      ]
     },
     "exteriorArchitecture": {
       "promptPrefix": "Architectural",
-      "architecturalStyle": ["Modern", "Gothic", "Futuristic", "Mediterranean", "Brutalist", "Victorian", "Minimalist", "Art Deco", "Colonial", "Contemporary", "Baroque", "Renaissance", "Neoclassical", "Tudor", "Prairie", "Craftsman", "Industrial", "Postmodern", "Bauhaus", "International", "Organic", "High-tech", "Beaux-Arts", "Deconstructivism"],
-      "buildingType": ["Residential", "Religious", "Commercial", "Hospitality", "Civic", "Cultural", "Educational", "Industrial", "Healthcare", "Government", "Mixed-use", "Recreational", "Transportation", "Agricultural", "Institutional", "Retail", "Sports"],
-      "typeOfArchitecture": ["House", "Cabin", "Office Building", "Resort Hotel", "Government Building", "Multi-family Home", "Art Museum", "Library", "Skyscraper", "Bridge", "Train Station", "Hospital", "Mansion", "School", "University", "Stadium", "Mall", "Theater", "Concert Hall", "Community Center", "Church", "Villa", "Synagogue", "Castle"],
-      "architecturalInspiration": ["Bauhaus", "Notre Dame", "Space Age", "Greek Isles", "Le Corbusier", "Queen Anne", "Tadao Ando", "Frank Lloyd Wright", "Antoni Gaudi", "Zaha Hadid", "Richard Neutra", "Louis Kahn", "Mies van der Rohe", "Alvar Aalto", "Renzo Piano", "Oscar Niemeyer", "Philip Johnson", "Eero Saarinen", "Norman Foster", "Rem Koolhaas", "Santiago Calatrava", "Frank Gehry", "I. M. Pei", "Moshe Safdie"],
-      "focalPoint": ["Main Entrance", "Ornate Facade", "Entire Building", "Courtyard", "Structural Elements", "Roofline", "Windows", "Doorway", "Balcony", "Staircase", "Garden", "Pool", "Sculpture", "Archway", "Canopy", "Skyline", "Pedestrian Pathway", "Bridge", "Dome", "Spire", "Tower", "Plaza", "Patio"],
-      "texturesOrMaterials": ["Glass", "Steel", "Concrete", "Wood", "Brick", "Stone", "Plaster", "Terracotta", "Metal", "Composite materials", "Stucco", "Tile", "Marble", "Granite", "Copper", "Aluminum", "Vinyl", "Asphalt", "Gravel", "Sandstone", "Limestone", "Slate", "Bamboo", "Fiber Cement"],
-      "details": ["Clean Lines", "Large Windows", "Gargoyles", "Spires", "Arches", "Balconies", "Columns", "Exposed Beams", "Minimal adornment", "Decorative Trim", "Bay Windows", "Dynamic Shapes", "Open Spaces", "Historic Signage", "Mosaics", "Murals", "Frescoes", "Skylights", "Cladding", "Lattice", "Wrought Iron", "Ornamental Gardens", "Green Roof", "Water Features"]
+      "architecturalStyle": [
+        "Modern", "Gothic", "Futuristic", "Mediterranean", "Brutalist", "Victorian", "Minimalist", "Art Deco", "Colonial", "Contemporary", "Baroque", "Renaissance", "Neoclassical", "Tudor", "Prairie", "Craftsman", "Industrial", "Postmodern", "Bauhaus", "International", "Organic", "High-tech", "Beaux-Arts", "Deconstructivism"
+      ],
+      "buildingType": [
+        "Residential", "Religious", "Commercial", "Hospitality", "Civic", "Cultural", "Educational", "Industrial", "Healthcare", "Government", "Mixed-use", "Recreational", "Transportation", "Agricultural", "Institutional", "Retail", "Sports"
+      ],
+      "typeOfArchitecture": [
+        "House", "Cabin", "Office Building", "Resort Hotel", "Government Building", "Multi-family Home", "Art Museum", "Library", "Skyscraper", "Bridge", "Train Station", "Hospital", "Mansion", "School", "University", "Stadium", "Mall", "Theater", "Concert Hall", "Community Center", "Church", "Villa", "Synagogue", "Castle"
+      ],
+      "architecturalInspiration": [
+        "Bauhaus", "Notre Dame", "Space Age", "Greek Isles", "Le Corbusier", "Queen Anne", "Tadao Ando", "Frank Lloyd Wright", "Antoni Gaudi", "Zaha Hadid", "Richard Neutra", "Louis Kahn", "Mies van der Rohe", "Alvar Aalto", "Renzo Piano", "Oscar Niemeyer", "Philip Johnson", "Eero Saarinen", "Norman Foster", "Rem Koolhaas", "Santiago Calatrava", "Frank Gehry", "I. M. Pei", "Moshe Safdie"
+      ],
+      "focalPoint": [
+        "Main Entrance", "Ornate Facade", "Entire Building", "Courtyard", "Structural Elements", "Roofline", "Windows", "Doorway", "Balcony", "Staircase", "Garden", "Pool", "Sculpture", "Archway", "Canopy", "Skyline", "Pedestrian Pathway", "Bridge", "Dome", "Spire", "Tower", "Plaza", "Patio"
+      ],
+      "texturesOrMaterials": [
+        "Glass", "Steel", "Concrete", "Wood", "Brick", "Stone", "Plaster", "Terracotta", "Metal", "Composite materials", "Stucco", "Tile", "Marble", "Granite", "Copper", "Aluminum", "Vinyl", "Asphalt", "Gravel", "Sandstone", "Limestone", "Slate", "Bamboo", "Fiber Cement"
+      ],
+      "details": [
+        "Clean Lines", "Large Windows", "Gargoyles", "Spires", "Arches", "Balconies", "Columns", "Exposed Beams", "Minimal adornment", "Decorative Trim", "Bay Windows", "Dynamic Shapes", "Open Spaces", "Historic Signage", "Mosaics", "Murals", "Frescoes", "Skylights", "Cladding", "Lattice", "Wrought Iron", "Ornamental Gardens", "Green Roof", "Water Features",
+        "Natural Weathering", "Water Puddles", "Overgrown Ivy", "Trash Bins on Curb", "Parked Bicycles", "Street Signs", "Slightly Faded Paint", "Leaves on pathway"
+      ]
     },
     "interiorDesign": {
       "promptPrefix": "Interior design",
-      "style": ["Modern", "Scandinavian", "Industrial", "Bohemian", "Minimalist", "Mid-century Modern", "Rustic", "Traditional", "Transitional", "Art Deco", "Coastal", "Farmhouse", "Contemporary", "Eclectic", "Mediterranean", "French Country", "Shabby Chic", "Asian Zen", "Glam", "Urban Loft", "Cottagecore", "Gothic Revival", "Maximalist", "Retro"],
-      "roomType": ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Dining Room", "Office", "Study", "Library", "Foyer", "Home Theater", "Guest Room", "Nursery", "Gym", "Attic", "Conservatory", "Pantry", "Sunroom", "Meditation Room", "Dressing Room", "Studio", "Laundry Room", "Game Room", "Hobby Room", "Wine Cellar"],
-      "inspiration": ["Frank Lloyd Wright", "Alvar Aalto", "Le Corbusier", "Antoni Gaudi", "Tadao Ando", "Charles and Ray Eames", "Louis Kahn", "Andrea Palladio", "Kelly Wearstler", "Eileen Gray", "Dorothy Draper", "Joanna Gaines", "Philippe Starck", "Jean Nouvel", "Renzo Piano", "Pierre-Yves Rochon", "Rachel Ashwell", "Tadao Ando", "Coco Chanel", "Jean-Michel Basquiat", "William Morris", "John Soane", "Iris Apfel", "Marcel Breuer"],
-      "focalPoint": ["Fireplace", "Bed", "Kitchen Island", "Bathtub", "Dining Table", "Desk", "Bookshelves", "Reading Nook", "Grand Staircase", "Screen", "Bedside Table", "Crib", "Exercise Equipment", "Skylight", "Indoor Garden", "Shelving", "Lounge Chairs", "Meditation Space", "Vanity", "Art Supplies", "Washer and Dryer", "Gaming Console", "Craft Table", "Wine Racks"],
-      "texturesOrMaterials": ["Glass", "Wood", "Metal", "Rattan", "Concrete", "Walnut", "Stone", "Marble", "Granite", "Velvet", "Linen", "Shiplap", "Rubber Flooring", "Mixed Textures", "Terracotta", "Cotton", "Bamboo", "Silk", "Exposed Brick", "Floral Prints", "Leather", "Patterned Wallpaper", "Cork"],
-      "brand": ["IKEA", "HAY", "Restoration Hardware", "Anthropologie", "Muji", "West Elm", "Pottery Barn", "Ethan Allen", "RH Modern", "Jonathan Adler", "Serena & Lily", "Magnolia", "Technogym", "CB2", "Pier 1", "French Heritage", "Laura Ashley", "Japanese Style", "Versace", "Crate & Barrel", "Cath Kidston", "Ralph Lauren", "Vinotemp"],
-      "detail": ["Clean Lines", "Minimal Adornment", "Exposed Beams", "Eclectic Decor", "Simple Geometry", "Sleek Furniture", "Wooden Beams", "Crown Molding", "Mix of Styles", "Geometric Patterns", "Nautical Themes", "Vintage Accents", "Minimalist Equipment", "Unique Art Pieces", "Arched Doorways", "Rustic Cabinets", "Distressed Furniture", "Shoji Screens", "Mirrors", "Industrial Decor", "Wicker Baskets", "Dark Wood Paneling", "Collectibles", "Vintage Decor"]
+      "style": [
+        "Modern", "Scandinavian", "Industrial", "Bohemian", "Minimalist", "Mid-century Modern", "Rustic", "Traditional", "Transitional", "Art Deco", "Coastal", "Farmhouse", "Contemporary", "Eclectic", "Mediterranean", "French Country", "Shabby Chic", "Asian Zen", "Glam", "Urban Loft", "Cottagecore", "Gothic Revival", "Maximalist", "Retro"
+      ],
+      "roomType": [
+        "Living Room", "Bedroom", "Kitchen", "Bathroom", "Dining Room", "Office", "Study", "Library", "Foyer", "Home Theater", "Guest Room", "Nursery", "Gym", "Attic", "Conservatory", "Pantry", "Sunroom", "Meditation Room", "Dressing Room", "Studio", "Laundry Room", "Game Room", "Hobby Room", "Wine Cellar"
+      ],
+      "inspiration": [
+        "Frank Lloyd Wright", "Alvar Aalto", "Le Corbusier", "Antoni Gaudi", "Tadao Ando", "Charles and Ray Eames", "Louis Kahn", "Andrea Palladio", "Kelly Wearstler", "Eileen Gray", "Dorothy Draper", "Joanna Gaines", "Philippe Starck", "Jean Nouvel", "Renzo Piano", "Pierre-Yves Rochon", "Rachel Ashwell", "Tadao Ando", "Coco Chanel", "Jean-Michel Basquiat", "William Morris", "John Soane", "Iris Apfel", "Marcel Breuer"
+      ],
+      "focalPoint": [
+        "Fireplace", "Bed", "Kitchen Island", "Bathtub", "Dining Table", "Desk", "Bookshelves", "Reading Nook", "Grand Staircase", "Screen", "Bedside Table", "Crib", "Exercise Equipment", "Skylight", "Indoor Garden", "Shelving", "Lounge Chairs", "Meditation Space", "Vanity", "Art Supplies", "Washer and Dryer", "Gaming Console", "Craft Table", "Wine Racks"
+      ],
+      "texturesOrMaterials": [
+        "Glass", "Wood", "Metal", "Rattan", "Concrete", "Walnut", "Stone", "Marble", "Granite", "Velvet", "Linen", "Shiplap", "Rubber Flooring", "Mixed Textures", "Terracotta", "Cotton", "Bamboo", "Silk", "Exposed Brick", "Floral Prints", "Leather", "Patterned Wallpaper", "Cork"
+      ],
+      "brand": [
+        "IKEA", "HAY", "Restoration Hardware", "Anthropologie", "Muji", "West Elm", "Pottery Barn", "Ethan Allen", "RH Modern", "Jonathan Adler", "Serena & Lily", "Magnolia", "Technogym", "CB2", "Pier 1", "French Heritage", "Laura Ashley", "Japanese Style", "Versace", "Crate & Barrel", "Cath Kidston", "Ralph Lauren", "Vinotemp"
+      ],
+      "detail": [
+        "Clean Lines", "Minimal Adornment", "Exposed Beams", "Eclectic Decor", "Simple Geometry", "Sleek Furniture", "Wooden Beams", "Crown Molding", "Mix of Styles", "Geometric Patterns", "Nautical Themes", "Vintage Accents", "Minimalist Equipment", "Unique Art Pieces", "Arched Doorways", "Rustic Cabinets", "Distressed Furniture", "Shoji Screens", "Mirrors", "Industrial Decor", "Wicker Baskets", "Dark Wood Paneling", "Collectibles", "Vintage Decor",
+        "Crumpled Pillows", "Half-eaten Snack", "Steaming Cup", "Pet Toys on Floor", "Jacket Draped over Chair", "Tangled Charger Cords", "Slightly Crooked Frames"
+      ]
     }
   }
 }
