@@ -7,7 +7,6 @@ import json
 import os
 import time
 
-# --- CONFIGURACIÓN DE PÁGINA ---
 # ==========================================
 # 1. CONFIGURACIÓN VISUAL (ESTILO TÉCNICO)
 # ==========================================
@@ -101,7 +100,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- FUNCIONES DE UTILIDAD (LA BATIDORA 4K) ---
+# ==========================================
+# 2. FUNCIONES DE UTILIDAD (LA BATIDORA 4K)
+# ==========================================
+# AQUÍ ESTÁ LA FUNCIÓN QUE FALTABA
 def upscale_image(image, target_width=3840): 
     w_percent = (target_width / float(image.size[0]))
     h_size = int((float(image.size[1]) * float(w_percent)))
@@ -198,7 +200,7 @@ if check_password():
     with c_controls_2:
         st.write("") 
         st.write("") 
-        if st.button("Recargar JSONs", use_container_width=True):
+        if st.button("Recargar JSONs", width="stretch"):
             st.cache_data.clear()
             st.rerun()
     with c_controls_3:
@@ -226,7 +228,7 @@ if check_password():
         cols_refs = st.columns(6) 
         for i, ref in enumerate(st.session_state.referencias):
             with cols_refs[i % 6]:
-                st.image(ref["img"], use_container_width=True)
+                st.image(ref["img"], width="stretch")
                 if st.checkbox("Preparar", key=f"chk_orig_{i}"):
                     refs_activas.append(ref["img"].convert("RGB"))
 
@@ -241,7 +243,7 @@ if check_password():
         st.markdown("**1. Prompt inicial (Idea)**")
         cmd_input = st.text_area("Comando:", height=150, label_visibility="collapsed", 
                                  placeholder="Ej: Improve edit: foto de una sala, Remove RED marked shapes")
-        btn_mejorar = st.button("✨ Procesar Idea", type="primary", use_container_width=True)
+        btn_mejorar = st.button("✨ Procesar Idea", type="primary", width="stretch")
 
     # Columna Derecha: Salida del Modelo (Solo Lectura)
     with col_out:
@@ -305,7 +307,7 @@ if check_password():
     # --- ZONA 3: GENERACIÓN DE IMAGEN ---
     st.divider()
     
-    if st.button("🚀 Renderizar Imagen", use_container_width=True):
+    if st.button("🚀 Renderizar Imagen", width="stretch"):
         if st.session_state.prompt_final:
             with st.status("Procesando imagen...", expanded=False) as status:
                 try:
@@ -330,81 +332,4 @@ if check_password():
                         contenido_solicitud = [prompt_render] + refs_activas
                         response = client.models.generate_content(
                             model=model_map[modelo_nombre],
-                            contents=contenido_solicitud,
-                            config=types.GenerateContentConfig(
-                                response_modalities=["IMAGE"]
-                            )
-                        )
-                        if response and response.parts:
-                            for part in response.parts:
-                                if part.inline_data:
-                                    img_result = PIL.Image.open(BytesIO(part.inline_data.data))
-                                    break
-                    
-                    # PROCESAMIENTO FINAL: Guardar imagen + prompt
-                    if img_result:
-                        nuevo_registro = {
-                            "img": img_result,
-                            "prompt": st.session_state.prompt_final # Guardamos el prompt exacto
-                        }
-                        st.session_state.historial.insert(0, nuevo_registro)
-                        if len(st.session_state.historial) > 10:
-                            st.session_state.historial.pop()
-                        
-                        status.update(label="Renderizado completo", state="complete")
-                        st.rerun()
-                    else:
-                        st.error("No se generó imagen (Posible filtro de seguridad).")
-                        
-                except Exception as e:
-                    st.error(f"Error crítico: {e}")
-        else:
-            st.warning("El campo de prompt final está vacío.")
-
-    # --- HISTORIAL CON BOTONES Y PROMPTS ---
-    if st.session_state.historial:
-        st.divider()
-        st.subheader("Historial de Sesión")
-        
-        cols = st.columns(3)
-        for i, item in enumerate(st.session_state.historial):
-            
-            # Compatibilidad si había imágenes sueltas de la sesión anterior
-            if isinstance(item, PIL.Image.Image):
-                img = item
-                prompt_txt = "Prompt no registrado"
-            else:
-                img = item["img"]
-                prompt_txt = item["prompt"]
-                
-            with cols[i % 3]:
-                st.image(img, use_container_width=True)
-                
-                # Cuadro de texto para mostrar el prompt (solo lectura)
-                st.text_area("Prompt:", value=prompt_txt, height=80, disabled=True, key=f"txt_{i}", label_visibility="collapsed")
-                
-                c1, c2, c3 = st.columns([1, 1, 1])
-                
-                buf = BytesIO()
-                img.save(buf, format="PNG")
-                c1.download_button("💾", buf.getvalue(), f"demos_{i}.png", "image/png", key=f"dl_{i}")
-                
-                if c2.button("🔍 4K", key=f"up_{i}"):
-                    with st.spinner("Reescalando..."):
-                        img_4k = upscale_image(img)
-                        buf_4k = BytesIO()
-                        img_4k.save(buf_4k, format="PNG", optimize=True)
-                        st.session_state[f"ready_4k_{i}"] = buf_4k.getvalue()
-                        st.rerun()
-                
-                if f"ready_4k_{i}" in st.session_state:
-                    c2.download_button("⬇️", st.session_state[f"ready_4k_{i}"], f"4k_{i}.png", "image/png", key=f"dl4k_{i}")
-
-                if c3.button("🔄 Ref", key=f"ref_{i}"):
-                    st.session_state.referencias.append({
-                        "img": img,
-                        "name": f"hist_{int(time.time())}.png"
-                    })
-                    st.toast("Añadida a Referencias", icon="✅")
-                    time.sleep(0.5)
-                    st.rerun()
+                            contents=contenido
