@@ -10,7 +10,7 @@ import time
 # ==========================================
 # 1. CONFIGURACIÓN VISUAL (ESTILO TÉCNICO)
 # ==========================================
-st.set_page_config(page_title="Archviz Specialist", layout="wide", page_icon="😸")
+st.set_page_config(page_title="Archviz Specialist", layout="wide", page_icon="▪️")
 
 st.markdown("""
 <style>
@@ -100,16 +100,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ==========================================
-# 2. FUNCIONES DE UTILIDAD (LA BATIDORA 4K)
-# ==========================================
-# AQUÍ ESTÁ LA FUNCIÓN QUE FALTABA
+# --- FUNCIONES DE UTILIDAD ---
 def upscale_image(image, target_width=3840): 
     w_percent = (target_width / float(image.size[0]))
     h_size = int((float(image.size[1]) * float(w_percent)))
     img_resized = image.resize((target_width, h_size), PIL.Image.Resampling.LANCZOS)
     return img_resized
-    
+
 # --- CARGADOR DE DATOS JSON ---
 @st.cache_data
 def load_json_data(folder_path="data"):
@@ -200,14 +197,14 @@ if check_password():
     with c_controls_2:
         st.write("") 
         st.write("") 
-        if st.button("Recargar JSONs", width="stretch"):
+        if st.button("Recargar JSONs", use_container_width=True):
             st.cache_data.clear()
             st.rerun()
     with c_controls_3:
         pass
         
     # --- ZONA 1: REFERENCIAS Y PORTAPAPELES ---
-    st.subheader("1. Ingredientes Visuales (Referencias)")
+    st.subheader("1. Referencias Visuales")
     
     uploaded_files = st.file_uploader("Sube o pega tus fotos aquí", 
                                      type=["png", "jpg", "jpeg"], accept_multiple_files=True)
@@ -221,18 +218,19 @@ if check_password():
     refs_activas = []
     if st.session_state.referencias:
         col_btn_limpiar, _ = st.columns([1, 4])
-        if col_btn_limpiar.button("🍽️ Limpiar Mesa de Trabajo"):
+        if col_btn_limpiar.button("🗑️ Limpiar Referencias"):
             st.session_state.referencias = []
             st.rerun()
             
         cols_refs = st.columns(6) 
         for i, ref in enumerate(st.session_state.referencias):
             with cols_refs[i % 6]:
-                st.image(ref["img"], width="stretch")
-                if st.checkbox("Preparar", key=f"chk_orig_{i}"):
+                st.image(ref["img"], use_container_width=True)
+                if st.checkbox("Usar", key=f"chk_orig_{i}"):
                     refs_activas.append(ref["img"].convert("RGB"))
 
     st.divider()
+
     # --- ZONA 2: ULTIMATE PROMPT ENGINE (LADO A LADO) ---
     st.subheader("2. Generador de Prompt")
     
@@ -243,7 +241,7 @@ if check_password():
         st.markdown("**1. Prompt inicial (Idea)**")
         cmd_input = st.text_area("Comando:", height=150, label_visibility="collapsed", 
                                  placeholder="Ej: Improve edit: foto de una sala, Remove RED marked shapes")
-        btn_mejorar = st.button("✨ Procesar Idea", type="primary", width="stretch")
+        btn_mejorar = st.button("✨ Procesar Idea", type="primary", use_container_width=True)
 
     # Columna Derecha: Salida del Modelo (Solo Lectura)
     with col_out:
@@ -284,7 +282,7 @@ if check_password():
                         texto_limpio = res.text.strip()
                         st.session_state.prompt_mejorado = texto_limpio
                         st.session_state.prompt_final = texto_limpio
-                        st.session_state["fp_area"] = texto_limpio # Actualiza la caja de abajo
+                        st.session_state["fp_area"] = texto_limpio 
                         st.rerun()
                     else:
                         st.error("El modelo devolvió una respuesta vacía.")
@@ -304,13 +302,13 @@ if check_password():
     if final_prompt != st.session_state.prompt_final:
         st.session_state.prompt_final = final_prompt
 
-# --- ZONA 3: GENERACIÓN DE IMAGEN ---
+    # --- ZONA 3: GENERACIÓN DE IMAGEN ---
     st.divider()
     
-    if st.button("🚀 Renderizar Imagen", width="stretch"):
+    if st.button("🚀 Renderizar Imagen", use_container_width=True):
         if st.session_state.prompt_final:
             with st.status("Procesando imagen...", expanded=False) as status:
-                try: 
+                try:
                     prompt_render = f"High quality architectural visualization. {st.session_state.prompt_final}"
                     img_result = None
 
@@ -336,7 +334,8 @@ if check_password():
                             config=types.GenerateContentConfig(
                                 response_modalities=["IMAGE"]
                             )
-                        ) 
+                        )
+                        
                         if response and response.parts:
                             for part in response.parts:
                                 if part.inline_data:
@@ -356,9 +355,55 @@ if check_password():
                         status.update(label="Renderizado completo", state="complete")
                         st.rerun()
                     else:
-                        st.error("No se generó imagen (Posible filtro de seguridad).")
+                        st.error("No se generó imagen. Revisa si la respuesta fue bloqueada o se devolvió formato de texto.")
                         
-                except Exception as e: 
-                    st.error(f"Error crítico en la generación: {e}")
+                except Exception as e:
+                    st.error(f"Error crítico durante la generación: {e}")
         else:
             st.warning("El campo de prompt final está vacío.")
+
+    # --- HISTORIAL CON BOTONES Y PROMPTS ---
+    if st.session_state.historial:
+        st.divider()
+        st.subheader("Historial de Sesión")
+        
+        cols = st.columns(3)
+        for i, item in enumerate(st.session_state.historial):
+            
+            if isinstance(item, PIL.Image.Image):
+                img = item
+                prompt_txt = "Prompt no registrado"
+            else:
+                img = item["img"]
+                prompt_txt = item["prompt"]
+                
+            with cols[i % 3]:
+                st.image(img, use_container_width=True)
+                
+                st.text_area("Prompt:", value=prompt_txt, height=80, disabled=True, key=f"txt_{i}", label_visibility="collapsed")
+                
+                c1, c2, c3 = st.columns([1, 1, 1])
+                
+                buf = BytesIO()
+                img.save(buf, format="PNG")
+                c1.download_button("💾", buf.getvalue(), f"archviz_{i}.png", "image/png", key=f"dl_{i}")
+                
+                if c2.button("🔍 4K", key=f"up_{i}"):
+                    with st.spinner("Reescalando..."):
+                        img_4k = upscale_image(img)
+                        buf_4k = BytesIO()
+                        img_4k.save(buf_4k, format="PNG", optimize=True)
+                        st.session_state[f"ready_4k_{i}"] = buf_4k.getvalue()
+                        st.rerun()
+                
+                if f"ready_4k_{i}" in st.session_state:
+                    c2.download_button("⬇️", st.session_state[f"ready_4k_{i}"], f"4k_{i}.png", "image/png", key=f"dl4k_{i}")
+
+                if c3.button("🔄 Ref", key=f"ref_{i}"):
+                    st.session_state.referencias.append({
+                        "img": img,
+                        "name": f"hist_{int(time.time())}.png"
+                    })
+                    st.toast("Añadida a Referencias", icon="✅")
+                    time.sleep(0.5)
+                    st.rerun()
