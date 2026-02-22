@@ -11,7 +11,7 @@ import time
 # ==========================================
 # 1. CONFIGURACIÓN VISUAL (ESTILO TÉCNICO)
 # ==========================================
-st.set_page_config(page_title="Achviz Specialist", layout="wide", page_icon="😸")
+st.set_page_config(page_title="Archviz Specialist", layout="wide", page_icon="😸")
 
 st.markdown("""
 <style>
@@ -166,7 +166,7 @@ if check_password():
     client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
 
     # --- ENCABEZADO ---
-    st.title("Ultimate Archiviz Generator")
+    st.title("Ultimate Archviz Generator")
     st.caption("ArchViz Specialized | Nano Banana Series & Imagen 3")
 
     with st.expander("📘 Glosario de Palabras Clave y Tutorial", expanded=False):
@@ -204,7 +204,7 @@ if check_password():
     with c_controls_3:
         pass
         
-# --- ZONA 1: REFERENCIAS Y PORTAPAPELES ---
+    # --- ZONA 1: REFERENCIAS Y PORTAPAPELES ---
     st.subheader("1. Ingredientes Visuales (Referencias)")
     
     uploaded_files = st.file_uploader("Sube o pega tus fotos aquí", 
